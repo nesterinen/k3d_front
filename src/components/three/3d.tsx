@@ -13,12 +13,7 @@ let geometry: THREE.BoxGeometry
 let material: THREE.MeshNormalMaterial
 let mesh: THREE.Mesh
 
-//let geometry, material, mesh
-
-//init()
-
 function init(width = 500, height = 500) {
-    console.log(width, height)
     camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
     camera.position.y = 350
 
@@ -50,10 +45,12 @@ function resize(width: number, height: number) {
 function render() {
     // do not render if not in DOM:
     if (!renderer.domElement.parentNode) return;
-
     renderer.render(scene, camera)
 }
 
+function resetControls() {
+    controls.reset()
+}
 
 const PointCloudViewer = forwardRef((_props, ref) => {
     const refContainer = useRef<HTMLDivElement>(null)
@@ -61,7 +58,9 @@ const PointCloudViewer = forwardRef((_props, ref) => {
     useImperativeHandle(ref, () => ({
         resize(width: number, height: number){
             resize(width, height)
-        }
+        },
+
+        resetControls(){resetControls()}
     }))
 
     useEffect(() => {
