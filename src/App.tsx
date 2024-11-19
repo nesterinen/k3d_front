@@ -3,7 +3,8 @@ import PointCloudViewer from "./components/three/3d"
 
 interface PointCloudViewerElement extends HTMLDivElement {
   resize: (width: number, height: number) => void,
-  resetControls: () => void
+  resetControls: () => void,
+  diagnosisModeSwitch(): () => void
 }
 
 function App() {
@@ -21,6 +22,10 @@ function App() {
     if(childRef.current) childRef.current.resetControls()
   }
 
+  const diagnosisModeSwitchEvent = () => {
+    if(childRef.current) childRef.current.diagnosisModeSwitch()
+  }
+
   return (
     <>
       <div style={{borderColor:"grey", borderStyle:"solid", borderWidth:"2px", width:`${width}px`, height:`${height}px`}}>
@@ -30,6 +35,7 @@ function App() {
       <button onClick={() => resizeEvent(500, 250)}>250</button>
       <button onClick={() => resizeEvent(500, 500)}>500</button>
       <button onClick={resetControlsEvent}>reset</button>
+      <button onClick={diagnosisModeSwitchEvent}>diagnosis</button>
     </>
   )
 }
