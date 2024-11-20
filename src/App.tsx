@@ -4,7 +4,8 @@ import PointCloudViewer from "./components/three/3d"
 interface PointCloudViewerElement extends HTMLDivElement {
   resize: (width: number, height: number) => void,
   resetControls: () => void,
-  diagnosisModeSwitch(): () => void
+  diagnosisModeSwitch: () => void,
+  getPointCloudFromApi: (latitude: number, longitude: number) => void
 }
 
 function App() {
@@ -26,6 +27,10 @@ function App() {
     if(childRef.current) childRef.current.diagnosisModeSwitch()
   }
 
+  const fetchApiEvent = (lat:number , lng: number) => {
+    if(childRef.current) childRef.current.getPointCloudFromApi(lat, lng)
+  }
+
   return (
     <>
       <div style={{borderColor:"grey", borderStyle:"solid", borderWidth:"2px", width:`${width}px`, height:`${height}px`}}>
@@ -36,6 +41,7 @@ function App() {
       <button onClick={() => resizeEvent(500, 500)}>500</button>
       <button onClick={resetControlsEvent}>reset</button>
       <button onClick={diagnosisModeSwitchEvent}>diagnosis</button>
+      <button onClick={() => fetchApiEvent(62.60064557510063, 29.762067322297078)}>FETCH</button>
     </>
   )
 }

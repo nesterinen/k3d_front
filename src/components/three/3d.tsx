@@ -3,7 +3,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 
 import { forwardRef, useEffect, useRef, useImperativeHandle } from 'react'
 
-import { getTif, tif2pcd, pcd2points, arduinoMap } from '../../utils/tifUtilities';
+import { getTif, tif2pcd, pcd2points, arduinoMap } from '../../utils/tifUtilities'
+import getTifFile from '../../services/apiService'
 
 // THREE setup ########################################################################
 let camera: THREE.PerspectiveCamera
@@ -209,11 +210,20 @@ function removePointCloud() {
     const object = scene.getObjectByName('point_cloud')
     scene.remove(object!)
 }
+
+function getPointCloudFromApi(latitude: number, longitude: number) {
+    console.log('FETCHING')
+    getTifFile(latitude, longitude)
+        .then(data => {
+            removePointCloud()
+            loadPointCloud(data)
+        })
+        .catch(error => console.log('apiErr', error))
+}
 // ####################################################################################
 
 
 // Main Component #####################################################################
-let loadLocal = true  // first render load local .tif file
 const PointCloudViewer = forwardRef((_props, ref) => {
     const refContainer = useRef<HTMLDivElement>(null)
 
@@ -224,7 +234,11 @@ const PointCloudViewer = forwardRef((_props, ref) => {
 
         resetControls(){resetControls()},
 
-        diagnosisModeSwitch(){diagnosisModeSwitch()}
+        diagnosisModeSwitch(){diagnosisModeSwitch()},
+
+        getPointCloudFromApi(latitude: number, longitude: number){
+            getPointCloudFromApi(latitude, longitude)
+        }
     }))
 
     useEffect(() => {
@@ -244,12 +258,10 @@ const PointCloudViewer = forwardRef((_props, ref) => {
     }, [refContainer])
 
     useEffect(() => {
-        if (loadLocal) {
-            getTif('tif/main_test.tif')
-                .then(data => {
-                    loadPointCloud(data)
-                })
-        }
+        getTif('tif/main_test.tif')
+            .then(data => {
+                loadPointCloud(data)
+            })
     }, [])
 
     return (
