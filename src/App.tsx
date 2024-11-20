@@ -1,6 +1,10 @@
 import { useRef, useState, Suspense } from "react"
+
 import PointCloudViewer from "./components/three/3d"
 import LeafletMap from "./components/leafletMap"
+
+import { useContext } from "react"
+import CoordinateContext from "./reducers/coordinateReducer"
 
 interface PointCloudViewerElement extends HTMLDivElement {
   resize: (width: number, height: number) => void,
@@ -12,7 +16,10 @@ interface PointCloudViewerElement extends HTMLDivElement {
 function App() {
   const [width, setWidth] = useState(500)
   const [height, setHeight] = useState(500)
+
   const childRef = useRef<PointCloudViewerElement>()
+
+  const [coordinates] = useContext(CoordinateContext)
 
   const resizeEvent = (width: number, height: number) => {
     setWidth(width)
@@ -34,6 +41,8 @@ function App() {
 
   return (
     <>
+      <p>{coordinates.latitude}, {coordinates.longitude}</p>
+
       <div style={{borderColor:"grey", borderStyle:"solid", borderWidth:"2px", width:`${width}px`, height:`${height}px`}}>
         <Suspense fallback={<p>loading..</p>}>
           <LeafletMap/>
@@ -48,7 +57,7 @@ function App() {
       <button onClick={() => resizeEvent(500, 500)}>500</button>
       <button onClick={resetControlsEvent}>reset</button>
       <button onClick={diagnosisModeSwitchEvent}>diagnosis</button>
-      <button onClick={() => fetchApiEvent(62.60064557510063, 29.762067322297078)}>FETCH</button>
+      <button onClick={() => fetchApiEvent(coordinates.latitude, coordinates.longitude)}>FETCH</button>
     </>
   )
 }
