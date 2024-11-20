@@ -1,5 +1,6 @@
-import { useRef, useState } from "react"
+import { useRef, useState, Suspense } from "react"
 import PointCloudViewer from "./components/three/3d"
+import LeafletMap from "./components/leafletMap"
 
 interface PointCloudViewerElement extends HTMLDivElement {
   resize: (width: number, height: number) => void,
@@ -33,6 +34,12 @@ function App() {
 
   return (
     <>
+      <div style={{borderColor:"grey", borderStyle:"solid", borderWidth:"2px", width:`${width}px`, height:`${height}px`}}>
+        <Suspense fallback={<p>loading..</p>}>
+          <LeafletMap/>
+        </Suspense>
+      </div>
+
       <div style={{borderColor:"grey", borderStyle:"solid", borderWidth:"2px", width:`${width}px`, height:`${height}px`}}>
           <PointCloudViewer ref={childRef}/>
       </div>
