@@ -2,23 +2,36 @@ import { useReducer, createContext } from "react"
 
 interface StateType {
     latitude: number,
-    longitude: number
+    longitude: number,
+    size: number
 }
 
 interface ActionType {
-    type: 'SET_COORDINATES',
+    type: 'SET_COORDINATES' | 'SET_SIZE',
     payload: {
-        latitude: number,
-        longitude: number
+        latitude?: number,
+        longitude?: number,
+        size?: number
     }
 }
 
 const coordinteReducer = (state: StateType, action: ActionType) => {
     switch (action.type) {
         case 'SET_COORDINATES':
+            if (!action.payload.latitude || !action.payload.longitude) {
+                return state
+            }
             return {
+                ...state,
                 latitude: action.payload.latitude,
-                longitude: action.payload.longitude
+                longitude: action.payload.longitude,
+            }
+        
+        case 'SET_SIZE':
+            if (!action.payload.size) return state
+            return {
+                ...state,
+                size: action.payload.size
             }
 
         default:
@@ -36,7 +49,8 @@ interface CCPProps {
 export const CoordinateContextProvider = ({ children }: CCPProps) => {
     const [coordinates, coordinatesDispatch] = useReducer(coordinteReducer, {
         latitude: 62.66591065727223,
-        longitude: 29.81011475983172
+        longitude: 29.81011475983172,
+        size: 1000
     })
 
     return (

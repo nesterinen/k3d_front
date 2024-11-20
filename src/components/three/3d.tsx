@@ -211,9 +211,9 @@ function removePointCloud() {
     scene.remove(object!)
 }
 
-function getPointCloudFromApi(latitude: number, longitude: number) {
+function getPointCloudFromApi(latitude: number, longitude: number, size: number) {
     console.log('FETCHING')
-    getTifFile(latitude, longitude)
+    getTifFile(latitude, longitude, size)
         .then(data => {
             removePointCloud()
             loadPointCloud(data)
@@ -236,8 +236,8 @@ const PointCloudViewer = forwardRef((_props, ref) => {
 
         diagnosisModeSwitch(){diagnosisModeSwitch()},
 
-        getPointCloudFromApi(latitude: number, longitude: number){
-            getPointCloudFromApi(latitude, longitude)
+        getPointCloudFromApi(latitude: number, longitude: number, size: number){
+            getPointCloudFromApi(latitude, longitude, size)
         }
     }))
 
