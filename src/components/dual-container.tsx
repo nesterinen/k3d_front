@@ -61,58 +61,48 @@ function App() {
       </>
     )
   }
+  //<div className="w-[45vw] h-[80vh] m-2 border text-center content-center">
 
   return (
     <div className="flex flex-wrap justify-center">
 
-      <div className="w-[500px] h-[572px] m-2">
+      <div className="w-[40vw] h-[70vh] m-2 border text-center content-center min-w-80 mb-12">
+        <LeafletMap/>
 
-          <div className="w-[500px] h-[500px] border text-center content-center">
-            <LeafletMap/>
-          </div>
+        <div className="w-full h-12 border border-foreground items-center flex">
+            <div className="w-2/4 text-left pl-2 grid grid-cols-[70px_auto] grid-rows-2 columns-sm">
+                <p className="text-sm font-semibold">latitude:</p>
+                <p className="text-sm font-semibold">{storage.latitude}</p>
+                <p className="text-sm font-semibold">longitude:</p>
+                <p className="text-sm font-semibold">{storage.longitude}</p>
+            </div>
 
-          <div className="w-[500px] h-[72px] border border-foreground items-center flex">
-              <div className="w-2/4 text-left pl-2 grid grid-cols-[70px_auto] grid-rows-2 columns-sm">
-                  <p className="text-sm font-semibold">latitude:</p>
-                  <p className="text-sm font-semibold">{storage.latitude}</p>
-                  <p className="text-sm font-semibold">longitude:</p>
-                  <p className="text-sm font-semibold">{storage.longitude}</p>
-              </div>
-
-              <div className="w-1/4 flex items-center">
-                  {storage.loading ? <Loading/> : <></>}
-              </div>
-
-              <div className="w-1/4 content-center text-center">
-                  {storage.loading ?
-                  <Button variant='ghost'>...</Button> :
-                  <Button onClick={() => fetchApiEvent(storage.latitude, storage.longitude)}>Fetch Map</Button>
-                  }
-              </div>
-
-
-          </div>
+            <div className="w-2/4 content-center text-center flex justify-end pr-1">
+                {storage.loading ?
+                <Loading/>  :
+                <Button onClick={() => fetchApiEvent(storage.latitude, storage.longitude)}>Fetch Map</Button>
+                }
+            </div>
+        </div>
       </div>
 
 
-      <div className="w-[500px] h-[572px] m-2">
-          <div className="w-[500px] h-[500px] border text-center content-center">
-              <PointCloudViewer ref={childRef}/>
-          </div>
+      <div className="w-[40vw] h-[70vh] m-2 border text-center content-center min-w-80 mb-12">
+          <PointCloudViewer ref={childRef}/>
 
-          <div className="w-[500px] h-[72px] border border-foreground items-center flex">
-              <div className="w-1/3 content-center text-center">
-                  <p className="text-sm font-semibold">Diagnosis mode</p>
-                  <Switch onCheckedChange={diagnosisModeSwitchEvent}/>
-              </div>
+          <div className="w-full h-12 border border-foreground items-center flex">
+            <div className="w-1/3 content-center text-center">
+                <p className="text-sm font-semibold">Diagnosis mode</p>
+                <Switch onCheckedChange={diagnosisModeSwitchEvent}/>
+            </div>
 
-              <div className="w-1/3 content-center text-center">
-                  <InfoSheet/>
-              </div>
+            <div className="w-1/3 content-center text-center">
+                <InfoSheet/>
+            </div>
 
-              <div className="w-1/3 content-center text-center">
-                  <Button onClick={resetControlsEvent}>Reset Camera</Button>
-              </div>
+            <div className="w-1/3 content-center text-center">
+                <Button onClick={resetControlsEvent}>Reset</Button>
+            </div>
           </div>
       </div>
 

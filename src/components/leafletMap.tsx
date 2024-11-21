@@ -31,18 +31,17 @@ const LeafletMap= () => {
         )
     }
 
-    // style={{ height: "498px", width: "498px" }}
+    //style={{ height: "498px", width: "500px", zIndex: 5 }}
+    // style={{ height: "80vh", width: "45vw", zIndex: 5 }}
 
     return (
-        <div>
-            <MapContainer center={[coordinates.latitude, coordinates.longitude]} zoom={14} style={{ height: "498px", width: "500px", zIndex: 5 }}>
+            <MapContainer center={[coordinates.latitude, coordinates.longitude]} zoom={14} style={{ display:"flex", width:"100%", height:"100%", zIndex: 5 }}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <LocationMarker/>
             </MapContainer>
-        </div>
     )
 }
 

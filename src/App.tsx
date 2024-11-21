@@ -8,7 +8,7 @@ import { SiteFooter } from "@/components/ui/site-footer"
 import { CoordinateContextProvider } from './reducers/coordinateReducer.tsx'
 
 function App() {
-  return (
+    return (
     <CoordinateContextProvider>
         <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
             <div className="min-h-screen">
@@ -18,8 +18,9 @@ function App() {
             </div>
         </ThemeProvider>
     </CoordinateContextProvider>
-  )
+    )
 }
+
 export default App
 
 /*

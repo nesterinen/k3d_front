@@ -43,7 +43,7 @@ function init(width = 500, height = 500) {
     controls = new OrbitControls(camera, renderer.domElement)
     controls.addEventListener('change', render)
     controls.minDistance = 5
-    controls.maxDistance = 350
+    controls.maxDistance = 500
     controls.zoomSpeed = 2
 }
 // ####################################################################################
@@ -90,9 +90,10 @@ let intersects: THREE.Intersection[]
 function initRaycast() {
     pointer = new THREE.Vector2()
     raycaster = new THREE.Raycaster()
-    document.addEventListener( 'pointermove', onPointerMove)
+    //document.addEventListener( 'pointermove', onPointerMove)
 }
 
+/*
 function onPointerMove( event: PointerEvent ) {
     const rect = renderer.domElement.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -101,6 +102,7 @@ function onPointerMove( event: PointerEvent ) {
     pointer.x = ( x / winWidth ) *  2 - 1;
     pointer.y = ( y / winHeight ) * - 2 + 1
 }
+*/
 
 function onClickDownEvent(){
     // onClick and drag conflict workaround
@@ -108,13 +110,20 @@ function onClickDownEvent(){
     lastControlsPolar = controls.getPolarAngle()
 }
 
-function clickEvent(): number | undefined{
+function clickEvent(event: React.MouseEvent<HTMLDivElement, MouseEvent>): number | undefined{
     // dont execute if controls angles have changed since onMouseDown={() => onClickDownEvent()}, screen was dragged.
     if (Math.abs(lastControlsAzimuth - controls.getAzimuthalAngle()) >= 0.01 &&
         Math.abs(lastControlsPolar - controls.getPolarAngle()) >= 0.01
     ) {
         return undefined
     }
+
+    const rect = renderer.domElement.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    pointer.x = ( x / winWidth ) *  2 - 1;
+    pointer.y = ( y / winHeight ) * - 2 + 1
 
     raycaster.setFromCamera( pointer, camera );
     intersects = raycaster.intersectObject( pointcloud );
@@ -165,13 +174,15 @@ function drawRay(raycaster: THREE.Raycaster) {
 
 
 // "Global functions" #################################################################
-function resize(width: number, height: number) {
-    winWidth = width
-    winHeight = height
-    camera.aspect = width / height
-    camera.updateProjectionMatrix()
-    renderer.setSize(width, height)
-    render()
+function resize(width: number | undefined, height: number | undefined) {
+    if (width && height) {
+        winHeight = height
+        winWidth = width
+        camera.aspect = width / height
+        camera.updateProjectionMatrix()
+        renderer.setSize(width, height)
+        render()
+    }
 }
 
 function render() {
@@ -231,6 +242,7 @@ function getPointCloudFromApi(latitude: number, longitude: number, size: number,
 const PointCloudViewer = forwardRef((_props, ref) => {
     const refContainer = useRef<HTMLDivElement>(null)
 
+
     useImperativeHandle(ref, () => ({
         resize(width: number, height: number){
             resize(width, height)
@@ -249,15 +261,19 @@ const PointCloudViewer = forwardRef((_props, ref) => {
         const container = refContainer.current
         
         if (container) {
-            if (container?.parentElement){
+            if (container.parentElement) {
                 init(container.parentElement.clientWidth, container.parentElement.clientHeight)
                 initRaycast()
             }
             container.appendChild(renderer.domElement)
+            if (window) {
+                window.addEventListener('resize', () => resize(container.parentElement?.clientWidth, container.parentElement?.clientHeight))
+            }
         }
 
         return () => { // cleanup when component closes
-            if (container) container.removeChild(renderer.domElement);
+            if (container) container.removeChild(renderer.domElement)
+            if (window) window.removeEventListener('resize', () => resize)
         }
     }, [refContainer])
 
@@ -270,7 +286,7 @@ const PointCloudViewer = forwardRef((_props, ref) => {
 
     return (
         <div ref={refContainer}
-            onClick={() => clickEvent()}
+            onClick={(event) => clickEvent(event)}
             onMouseDown={() => onClickDownEvent()}
         >
         </div>
