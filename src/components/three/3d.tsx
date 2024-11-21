@@ -219,7 +219,10 @@ function getPointCloudFromApi(latitude: number, longitude: number, size: number,
             loadPointCloud(data)
             callback()
         })
-        .catch(error => console.log('apiErr', error))
+        .catch(error => {
+            console.log('apiErr', error)
+            callback()
+        })
 }
 // ####################################################################################
 
