@@ -3,11 +3,12 @@ import { useReducer, createContext } from "react"
 interface StateType {
     latitude: number,
     longitude: number,
-    size: number
+    size: number,
+    loading: boolean
 }
 
 interface ActionType {
-    type: 'SET_COORDINATES' | 'SET_SIZE',
+    type: 'SET_COORDINATES' | 'SET_SIZE' | 'START_LOADING' | 'STOP_LOADING',
     payload: {
         latitude?: number,
         longitude?: number,
@@ -34,6 +35,18 @@ const coordinteReducer = (state: StateType, action: ActionType) => {
                 size: action.payload.size
             }
 
+        case 'START_LOADING':
+            return {
+                ...state,
+                loading: true
+            }
+
+        case 'STOP_LOADING':
+            return {
+                ...state,
+                loading: false
+            }
+
         default:
             return state
     }
@@ -50,7 +63,8 @@ export const CoordinateContextProvider = ({ children }: CCPProps) => {
     const [coordinates, coordinatesDispatch] = useReducer(coordinteReducer, {
         latitude: 62.66591065727223,
         longitude: 29.81011475983172,
-        size: 1000
+        size: 1000,
+        loading: false
     })
 
     return (

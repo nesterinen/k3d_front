@@ -31,10 +31,11 @@ const LeafletMap= () => {
         )
     }
 
+    // style={{ height: "498px", width: "498px" }}
 
     return (
         <div>
-            <MapContainer center={[coordinates.latitude, coordinates.longitude]} zoom={14} style={{ height: "500px", width: "500px" }}>
+            <MapContainer center={[coordinates.latitude, coordinates.longitude]} zoom={14} style={{ height: "498px", width: "500px", zIndex: 5 }}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
