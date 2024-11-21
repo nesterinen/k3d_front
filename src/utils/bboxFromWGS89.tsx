@@ -1,5 +1,5 @@
 // create square area from selected coordinates and size
-const bboxFromWGS= (latitude: number, longitude: number, size_km=1) => {
+const bboxFromWGS= (latitude: number, longitude: number, size_km=1): [number, number][] => {
     //According to NASA, Earth's radius at the equator is 6,378 kilometers, while the radius at the poles is 6,356 km
     const earth_radius = 6367 // km
 
@@ -12,7 +12,8 @@ const bboxFromWGS= (latitude: number, longitude: number, size_km=1) => {
     const h_lng = (new_longitude - longitude) / 2
 
     // square size_km bounding box
-    const bbox = [
+
+    const bbox: [number, number][] = [
         [
             latitude - h_lat,
             longitude - h_lng
