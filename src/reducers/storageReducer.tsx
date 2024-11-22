@@ -1,18 +1,30 @@
 import { useReducer, createContext } from "react"
 
+
+
 interface StateType {
     latitude: number,
     longitude: number,
     size: number,
-    loading: boolean
+    loading: boolean,
+    layer: 'leaflet' |
+            'maastokartta' |
+            'taustakartta' |
+            'selkokartta' |
+            'ortokuva'
 }
 
 interface ActionType {
-    type: 'SET_COORDINATES' | 'SET_SIZE' | 'START_LOADING' | 'STOP_LOADING',
+    type: 'SET_COORDINATES' | 'SET_SIZE' | 'START_LOADING' | 'STOP_LOADING' | 'SET_LAYER',
     payload: {
         latitude?: number,
         longitude?: number,
-        size?: number
+        size?: number,
+        layer?: 'leaflet' |
+                'maastokartta' |
+                'taustakartta' |
+                'selkokartta' |
+                'ortokuva'
     }
 }
 
@@ -47,6 +59,13 @@ const storageReducer = (state: StateType, action: ActionType) => {
                 loading: false
             }
 
+        case 'SET_LAYER':
+            if (!action.payload.layer) return state
+            return {
+                ...state,
+                layer: action.payload.layer
+            }
+
         default:
             return state
     }
@@ -64,7 +83,8 @@ export const StorageContextProvider = ({ children }: CCPProps) => {
         latitude: 62.66591065727223,
         longitude: 29.81011475983172,
         size: 1000,
-        loading: false
+        loading: false,
+        layer: 'leaflet'
     })
 
     return (

@@ -9,6 +9,7 @@ import StorageContext from "../reducers/storageReducer"
 import { Button } from "./ui/button"
 import { Switch } from "./ui/switch"
 import { InfoSheet } from "./ui/info-sheet"
+import { MapInfoSheet } from "./ui/map-info-sheet"
 import { Loading } from "./ui/loading"
 
 interface PointCloudViewerElement extends HTMLDivElement {
@@ -43,18 +44,20 @@ function App() {
   return (
     <div className="flex flex-wrap justify-center">
 
-      <div className="w-[90vw] h-[70vh] m-2 border text-center content-center min-w-80 max-w-2xl mb-12">
-        <LeafletMap mapType="leaflet"/>
+      <div className="w-[90vw] h-[70vh] m-2 border text-center content-center min-w-80 max-w-2xl mb-20">
+        <LeafletMap/>
 
-        <div className="w-full h-12 border border-foreground items-center flex">
-            <div className="w-2/4 text-left pl-2 grid grid-cols-[70px_auto] grid-rows-2 columns-sm">
-                <p className="text-sm font-semibold">latitude:</p>
+        <div className="w-full h-12 border border-foreground items-center flex justify-evenly">
+            <div className="text-left pl-2 grid grid-rows-2">
                 <p className="text-sm font-semibold">{storage.latitude}</p>
-                <p className="text-sm font-semibold">longitude:</p>
                 <p className="text-sm font-semibold">{storage.longitude}</p>
             </div>
 
-            <div className="w-2/4 content-center text-center flex justify-end pr-1">
+            <div>
+              <MapInfoSheet/>
+            </div>
+
+            <div className="content-center text-center flex justify-end px-1">
                 {storage.loading ?
                 <Loading/>  :
                 <Button onClick={() => fetchApiEvent(storage.latitude, storage.longitude)}>Fetch Map</Button>
@@ -67,17 +70,17 @@ function App() {
       <div className="w-[90vw] h-[70vh] m-2 border text-center content-center min-w-80 max-w-2xl mb-12">
           <PointCloudViewer ref={childRef}/>
 
-          <div className="w-full h-12 border border-foreground items-center flex">
-            <div className="w-1/3 content-center text-center">
+          <div className="w-full h-12 border border-foreground items-center flex justify-evenly">
+            <div className="content-center text-center">
                 <p className="text-sm font-semibold">Diagnosis mode</p>
                 <Switch onCheckedChange={diagnosisModeSwitchEvent}/>
             </div>
 
-            <div className="w-1/3 content-center text-center">
+            <div className="content-center text-center">
                 <InfoSheet/>
             </div>
 
-            <div className="w-1/3 content-center text-center">
+            <div className="content-center text-center">
                 <Button onClick={resetControlsEvent}>Reset</Button>
             </div>
           </div>

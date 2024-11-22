@@ -31,14 +31,16 @@ const MMLKartta = ({mapType}: MapProps) => {
     const api_key = '7737f837-ab4a-4765-9727-6deaa4a80082'
 
     const baseUrl = 'https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts?service=WMTS&request=GetTile&version=1.0.0'
-    const layer = '&layer=' + mapType
+    const layer = '&layer=' + mapType 
     const crs = '&TileMatrixSet=WGS84_Pseudo-Mercator'
     const tile = '&TileMatrix={z}&TileRow={y}&TileCol={x}'
     const format = '&style=default&format=image/png&api-key=' + api_key
 
     return (
         <WMSTileLayer
+            key={mapType}
             url={baseUrl + layer + crs + tile + format}
+            attribution='&copy; <a href="https://www.maanmittauslaitos.fi/karttakuvapalvelu">Maanmittauslaitos WMTS</a>'
             minZoom={1}
             maxZoom={15}
         />
@@ -47,7 +49,7 @@ const MMLKartta = ({mapType}: MapProps) => {
 
 const MapSelector = ({mapType}: MapProps) => {
     if (mapType) {
-        if(mapType === 'leaflet') {
+        if(mapType === 'leaflet'){ 
             return <LeafletLayer/>
         } else {
             return <MMLKartta mapType={mapType}/>
@@ -58,9 +60,9 @@ const MapSelector = ({mapType}: MapProps) => {
 }
 
 // https://react-leaflet.js.org/docs/example-events/
-const LeafletMap= ({ mapType }: MapProps) => {
-    const [coordinates, coordsDispatch] = useContext(StorageContext)
-    const [bbox, setbbox] = useState(bboxFromWGS(coordinates.latitude, coordinates.longitude, coordinates.size/1000))
+const LeafletMap= () => {
+    const [storage, dispatch] = useContext(StorageContext)
+    const [bbox, setbbox] = useState(bboxFromWGS(storage.latitude, storage.longitude, storage.size/1000))
 
     // Event listener on map clicks and 1km2 square rectangle at coordinates
     const LocationMarker = () => {
@@ -68,9 +70,9 @@ const LeafletMap= ({ mapType }: MapProps) => {
             click(event: LeafletMouseEvent){
                 const clickCoordinates = event.latlng
 
-                setbbox(bboxFromWGS(clickCoordinates.lat, clickCoordinates.lng, coordinates.size/1000))
+                setbbox(bboxFromWGS(clickCoordinates.lat, clickCoordinates.lng, storage.size/1000))
 
-                coordsDispatch({type: 'SET_COORDINATES', payload: {latitude: clickCoordinates.lat, longitude: clickCoordinates.lng}})
+                dispatch({type: 'SET_COORDINATES', payload: {latitude: clickCoordinates.lat, longitude: clickCoordinates.lng}})
             }
         })
 
@@ -81,14 +83,12 @@ const LeafletMap= ({ mapType }: MapProps) => {
 
     return(
         <MapContainer 
-                center={[coordinates.latitude, coordinates.longitude]}
+                center={[storage.latitude, storage.longitude]}
                 zoom={14}
                 style={{ display:"flex", width:"100%", height:"100%", zIndex: 5 }}
                 >
 
-                
-        
-            <MapSelector mapType={mapType}/>
+            <MapSelector mapType={storage.layer}/>
 
 
             <LocationMarker/>
