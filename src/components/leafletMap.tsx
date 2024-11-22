@@ -7,7 +7,7 @@ import { LeafletMouseEvent } from "leaflet"
 import bboxFromWGS from "../utils/bboxFromWGS89"
 
 import { useContext } from "react"
-import CoordinateContext from "../reducers/coordinateReducer"
+import StorageContext from "../reducers/storageReducer"
 
 interface MapProps {
     mapType?: 
@@ -59,7 +59,7 @@ const MapSelector = ({mapType}: MapProps) => {
 
 // https://react-leaflet.js.org/docs/example-events/
 const LeafletMap= ({ mapType }: MapProps) => {
-    const [coordinates, coordsDispatch] = useContext(CoordinateContext)
+    const [coordinates, coordsDispatch] = useContext(StorageContext)
     const [bbox, setbbox] = useState(bboxFromWGS(coordinates.latitude, coordinates.longitude, coordinates.size/1000))
 
     // Event listener on map clicks and 1km2 square rectangle at coordinates
@@ -79,8 +79,6 @@ const LeafletMap= ({ mapType }: MapProps) => {
         )
     }
 
-    console.log('Map reloaded')
-
     return(
         <MapContainer 
                 center={[coordinates.latitude, coordinates.longitude]}
@@ -96,29 +94,6 @@ const LeafletMap= ({ mapType }: MapProps) => {
             <LocationMarker/>
         </MapContainer>
     )
-    /*
-    if (mapType) {
-        if(mapType === 'leaflet') {
-            return <LeafletMap/>
-        } else {
-            return <MMLKartta mapType={mapType}/>
-        }
-    } else {
-        return <LeafletMap/>
-    }
-    */
 }
 
 export default LeafletMap
-
-
-/*
-        switch (mapType) {
-            case 'leaflet':
-                return <LeafletMap/>
-
-            case 'maastokartta' | '':
-                return <MMLKartta mapType={mapType}/>
-
-        }
- */

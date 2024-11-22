@@ -16,7 +16,7 @@ interface ActionType {
     }
 }
 
-const coordinteReducer = (state: StateType, action: ActionType) => {
+const storageReducer = (state: StateType, action: ActionType) => {
     switch (action.type) {
         case 'SET_COORDINATES':
             if (!action.payload.latitude || !action.payload.longitude) {
@@ -54,13 +54,13 @@ const coordinteReducer = (state: StateType, action: ActionType) => {
 
 
 //const CoordinateContext = createContext<(StateType | React.Dispatch<ActionType>)[]>({} as (StateType | React.Dispatch<ActionType>)[])
-const CoordinateContext = createContext<[StateType, React.Dispatch<ActionType>]>({} as [StateType, React.Dispatch<ActionType>])
+const StorageContext = createContext<[StateType, React.Dispatch<ActionType>]>({} as [StateType, React.Dispatch<ActionType>])
 
 interface CCPProps {
     children: React.ReactNode
 }
-export const CoordinateContextProvider = ({ children }: CCPProps) => {
-    const [coordinates, coordinatesDispatch] = useReducer(coordinteReducer, {
+export const StorageContextProvider = ({ children }: CCPProps) => {
+    const [storage, storageDispatch] = useReducer(storageReducer, {
         latitude: 62.66591065727223,
         longitude: 29.81011475983172,
         size: 1000,
@@ -68,11 +68,11 @@ export const CoordinateContextProvider = ({ children }: CCPProps) => {
     })
 
     return (
-        <CoordinateContext.Provider value={[coordinates, coordinatesDispatch]}>
+        <StorageContext.Provider value={[storage, storageDispatch]}>
             {children}
-        </CoordinateContext.Provider>
+        </StorageContext.Provider>
 
     )
 }
 
-export default CoordinateContext
+export default StorageContext

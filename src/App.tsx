@@ -5,11 +5,11 @@ import { SiteHeader } from '@/components/ui/site-header'
 import DualContainer from '@/components/dual-container'
 import { SiteFooter } from "@/components/ui/site-footer"
 
-import { CoordinateContextProvider } from './reducers/coordinateReducer.tsx'
+import { StorageContextProvider } from './reducers/storageReducer.tsx'
 
 function App() {
     return (
-    <CoordinateContextProvider>
+    <StorageContextProvider>
         <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
             <div className="min-h-screen">
                 <SiteHeader/>
@@ -17,7 +17,7 @@ function App() {
                 <SiteFooter/>
             </div>
         </ThemeProvider>
-    </CoordinateContextProvider>
+    </StorageContextProvider>
     )
 }
 
