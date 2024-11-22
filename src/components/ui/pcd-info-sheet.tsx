@@ -40,7 +40,7 @@ export function PCDInfoSheet() {
     </div>
     )
   }
-  console.log(storage?.stats)
+  
   return (
     <Sheet>
       <SheetTrigger asChild>
