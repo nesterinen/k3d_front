@@ -2,15 +2,24 @@ import "leaflet/dist/leaflet.css"
 import { useState } from "react"
 
 import { MapContainer, TileLayer, useMapEvents, Rectangle, WMSTileLayer } from "react-leaflet"
-import { LatLngBounds, LeafletMouseEvent } from "leaflet"
+import { LeafletMouseEvent } from "leaflet"
 
 import bboxFromWGS from "../utils/bboxFromWGS89"
 
 import { useContext } from "react"
 import CoordinateContext from "../reducers/coordinateReducer"
 
+interface MapProps {
+    mapType?: 
+        'leaflet' |
+        'maastokartta' |
+        'taustakartta' |
+        'selkokartta' |
+        'ortokuva'
+}
+
 // https://react-leaflet.js.org/docs/example-events/
-const LeafletMap= () => {
+const LeafletMap= ({ mapType }: MapProps) => {
     const [coordinates, coordsDispatch] = useContext(CoordinateContext)
     const [bbox, setbbox] = useState(bboxFromWGS(coordinates.latitude, coordinates.longitude, coordinates.size/1000))
 
@@ -31,11 +40,35 @@ const LeafletMap= () => {
         )
     }
 
-    //style={{ height: "498px", width: "500px", zIndex: 5 }}
-    // style={{ height: "80vh", width: "45vw", zIndex: 5 }}
+
+    const LeafletMap = () => {
+        return (
+            <MapContainer 
+            center={[coordinates.latitude, coordinates.longitude]}
+            zoom={14}
+            style={{ display:"flex", width:"100%", height:"100%", zIndex: 5 }}
+            >
+
+            <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <LocationMarker/>
+        </MapContainer>
+        )
+    }
 
 
-    return (
+    const MMLKartta = ({mapType}: MapProps) => {
+        const api_key = '7737f837-ab4a-4765-9727-6deaa4a80082'
+
+        const baseUrl = 'https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts?service=WMTS&request=GetTile&version=1.0.0'
+        const layer = '&layer=' + mapType
+        const crs = '&TileMatrixSet=WGS84_Pseudo-Mercator'
+        const tile = '&TileMatrix={z}&TileRow={y}&TileCol={x}'
+        const format = '&style=default&format=image/png&api-key=' + api_key
+
+        return (
             <MapContainer 
                 center={[coordinates.latitude, coordinates.longitude]}
                 zoom={14}
@@ -43,29 +76,37 @@ const LeafletMap= () => {
                 >
     
                 <WMSTileLayer
-                    url="https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts?service=WMTS&request=GetTile&version=1.0.0&layer=maastokartta&TileMatrixSet=WGS84_Pseudo-Mercator&TileMatrix={z}&TileRow={y}&TileCol={x}&style=default&format=image/png&api-key=7737f837-ab4a-4765-9727-6deaa4a80082"
+                    url={baseUrl + layer + crs + tile + format}
                     minZoom={1}
                     maxZoom={15}
                 />
                 <LocationMarker/>
             </MapContainer>
     )
+    }
+
+
+    if (mapType) {
+        if(mapType === 'leaflet') {
+            return <LeafletMap/>
+        } else {
+            return <MMLKartta mapType={mapType}/>
+        }
+    } else {
+        return <LeafletMap/>
+    }
 }
 
 export default LeafletMap
 
 
 /*
-            <MapContainer 
-                center={[coordinates.latitude, coordinates.longitude]}
-                zoom={14}
-                style={{ display:"flex", width:"100%", height:"100%", zIndex: 5 }}
-                >
-    
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <LocationMarker/>
-            </MapContainer>
-*/
+        switch (mapType) {
+            case 'leaflet':
+                return <LeafletMap/>
+
+            case 'maastokartta' | '':
+                return <MMLKartta mapType={mapType}/>
+
+        }
+ */
