@@ -1,5 +1,5 @@
 import { useReducer, createContext } from "react"
-
+import { PCDStats } from "@/components/three/3d"
 
 
 interface StateType {
@@ -11,11 +11,12 @@ interface StateType {
             'maastokartta' |
             'taustakartta' |
             'selkokartta' |
-            'ortokuva'
+            'ortokuva',
+    stats: PCDStats | undefined
 }
 
-interface ActionType {
-    type: 'SET_COORDINATES' | 'SET_SIZE' | 'START_LOADING' | 'STOP_LOADING' | 'SET_LAYER',
+export interface ActionType {
+    type: 'SET_COORDINATES' | 'SET_SIZE' | 'START_LOADING' | 'STOP_LOADING' | 'SET_LAYER' | 'SET_STATS',
     payload: {
         latitude?: number,
         longitude?: number,
@@ -24,7 +25,8 @@ interface ActionType {
                 'maastokartta' |
                 'taustakartta' |
                 'selkokartta' |
-                'ortokuva'
+                'ortokuva',
+        stats?: PCDStats
     }
 }
 
@@ -66,6 +68,13 @@ const storageReducer = (state: StateType, action: ActionType) => {
                 layer: action.payload.layer
             }
 
+        case 'SET_STATS':
+            if (!action.payload.stats) return state
+            return {
+                ...state,
+                stats: action.payload.stats
+            }
+
         default:
             return state
     }
@@ -84,7 +93,8 @@ export const StorageContextProvider = ({ children }: CCPProps) => {
         longitude: 29.81011475983172,
         size: 1000,
         loading: false,
-        layer: 'leaflet'
+        layer: 'leaflet',
+        stats: undefined
     })
 
     return (

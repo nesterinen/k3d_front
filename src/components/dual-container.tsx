@@ -8,7 +8,7 @@ import StorageContext from "../reducers/storageReducer"
 
 import { Button } from "./ui/button"
 import { Switch } from "./ui/switch"
-import { InfoSheet } from "./ui/info-sheet"
+import { PCDInfoSheet } from "./ui/pcd-info-sheet"
 import { MapInfoSheet } from "./ui/map-info-sheet"
 import { Loading } from "./ui/loading"
 
@@ -77,7 +77,7 @@ function App() {
             </div>
 
             <div className="content-center text-center">
-                <InfoSheet/>
+                <PCDInfoSheet/>
             </div>
 
             <div className="content-center text-center">
@@ -85,7 +85,6 @@ function App() {
             </div>
           </div>
       </div>
-
     </div>
   )
 }

@@ -1,7 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 
-import { forwardRef, useEffect, useRef, useImperativeHandle } from 'react'
+import { forwardRef, useEffect, useRef, useImperativeHandle, useContext } from 'react'
+import StorageContext from '@/reducers/storageReducer'
 
 import { getTif, tif2pcd, pcd2points, arduinoMap, getCoordinate } from '../../utils/pointCloudUtilities'
 import getTifFile from '../../services/apiService'
@@ -15,7 +16,7 @@ let winWidth: number, winHeight: number
 
 //let pointcloud: THREE.Points
 let pointcloud: THREE.Points<THREE.BufferGeometry<THREE.NormalBufferAttributes>, THREE.PointsMaterial, THREE.Object3DEventMap>
-interface PCDStats {
+export interface PCDStats {
     min_value: number,
     max_value: number,
     mean_value: number,
@@ -104,7 +105,8 @@ function onClickDownEvent(){
     lastControlsPolar = controls.getPolarAngle()
 }
 
-function clickEvent(event: React.MouseEvent<HTMLDivElement, MouseEvent>): number | undefined{
+import { ActionType } from '@/reducers/storageReducer'
+function clickEvent(event: React.MouseEvent<HTMLDivElement, MouseEvent>, callback: React.Dispatch<ActionType>): number | undefined{
     // dont execute if controls angles have changed since onMouseDown={() => onClickDownEvent()}, screen was dragged.
     if (Math.abs(lastControlsAzimuth - controls.getAzimuthalAngle()) >= 0.01 &&
         Math.abs(lastControlsPolar - controls.getPolarAngle()) >= 0.01
@@ -147,6 +149,8 @@ function clickEvent(event: React.MouseEvent<HTMLDivElement, MouseEvent>): number
         pointCloudStats.cursorEast = enCoords.easting
         pointCloudStats.cursorNorth = enCoords.northing
         pointCloudStats.elevation = elevation
+
+        callback({type: 'SET_STATS', payload:{stats: pointCloudStats}})
     }
 
     render()
@@ -270,6 +274,7 @@ function getPointCloudFromApi(latitude: number, longitude: number, size: number,
 // Main Component #####################################################################
 const PointCloudViewer = forwardRef((_props, ref) => {
     const refContainer = useRef<HTMLDivElement>(null)
+    const [, dispatch] = useContext(StorageContext)
 
     useImperativeHandle(ref, () => ({
         resize(width: number, height: number){
@@ -282,7 +287,7 @@ const PointCloudViewer = forwardRef((_props, ref) => {
 
         getPointCloudFromApi(latitude: number, longitude: number, size: number,  callback: () => void){
             getPointCloudFromApi(latitude, longitude, size, callback)
-        },
+        }
     }))
 
     useEffect(() => {
@@ -314,7 +319,7 @@ const PointCloudViewer = forwardRef((_props, ref) => {
 
     return (
         <div ref={refContainer}
-            onClick={(event) => clickEvent(event)}
+            onClick={(event) => clickEvent(event, dispatch)}
             onMouseDown={() => onClickDownEvent()}
         >
         </div>
