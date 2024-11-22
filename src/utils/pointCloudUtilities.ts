@@ -42,7 +42,16 @@ export const tif2pcd = (data: ArrayBuffer) => {
     // https://github.com/image-js/tiff
     // decode tiff file into readable format 
     const tiff = decode(data)[0]
-    
+
+    let easting = 0
+    let northing = 0
+    // get easting northing coordinates from decod tiff
+    for (const entry of tiff.fields.entries()) {
+        if(entry[0] === 33922) {
+            easting = entry[1][3]
+            northing = entry[1][4]
+        }
+    }
 
     // get z min and max for elevation to color linear mapping
     let min_value = Number.MAX_VALUE
@@ -92,7 +101,7 @@ export const tif2pcd = (data: ArrayBuffer) => {
 
     return {
         geometry: {position, color}, 
-        data: {min_value, max_value, mean_value, size: tiff.size, width: tiff.width, height: tiff.height, resolution: tiff.resolutionUnit}
+        data: {min_value, max_value, mean_value, size: tiff.size, width: tiff.width, height: tiff.height, resolution: tiff.resolutionUnit, easting, northing}
     }
 }
 

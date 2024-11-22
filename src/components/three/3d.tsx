@@ -3,7 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 
 import { forwardRef, useEffect, useRef, useImperativeHandle } from 'react'
 
-import { getTif, tif2pcd, pcd2points, arduinoMap } from '../../utils/tifUtilities'
+import { getTif, tif2pcd, pcd2points, arduinoMap } from '../../utils/pointCloudUtilities'
 import getTifFile from '../../services/apiService'
 
 // THREE setup ########################################################################
