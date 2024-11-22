@@ -46,6 +46,7 @@ export const tif2pcd = (data: ArrayBuffer) => {
     let easting = 0
     let northing = 0
     // get easting northing coordinates from decod tiff
+    // these coordinates are at the top left of the .tif
     for (const entry of tiff.fields.entries()) {
         if(entry[0] === 33922) {
             easting = entry[1][3]
@@ -152,4 +153,11 @@ export const pcd2points = ({position, color}: PCDProps) => {
 export const arduinoMap = (x: number, in_min: number, in_max: number, out_min: number, out_max: number) => {
     // https://docs.arduino.cc/language-reference/en/functions/math/map/
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+
+export const getCoordinate = (x: number, y: number, easting: number, northing: number, width: number, height: number, resolution: number) => {
+    const newEasting = (x + (width/2)) * resolution + easting
+    const newNorthing = northing - (y + (height/2)) * resolution
+    return {easting: newEasting, northing: newNorthing}
 }

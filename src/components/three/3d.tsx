@@ -3,7 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 
 import { forwardRef, useEffect, useRef, useImperativeHandle } from 'react'
 
-import { getTif, tif2pcd, pcd2points, arduinoMap } from '../../utils/pointCloudUtilities'
+import { getTif, tif2pcd, pcd2points, arduinoMap, getCoordinate } from '../../utils/pointCloudUtilities'
 import getTifFile from '../../services/apiService'
 
 // THREE setup ########################################################################
@@ -22,7 +22,12 @@ interface PCDStats {
     size: number,
     width: number,
     height: number,
-    resolution: number
+    resolution: number,
+    easting: number,
+    northing: number,
+    cursorNorth?: number,
+    cursorEast?: number,
+    elevation?: number
 }
 let pointCloudStats: PCDStats
 
@@ -127,6 +132,21 @@ function clickEvent(event: React.MouseEvent<HTMLDivElement, MouseEvent>): number
         const bminz = pointcloud.geometry.boundingBox!.min.y
         elevation = arduinoMap(selectedz, bminz, bmaxz, pointCloudStats.min_value, pointCloudStats.max_value)
         drawPointerSphere(intersects[0].point)
+
+        // get easting northing
+        const enCoords = getCoordinate(
+            intersects[0].point.x,
+            intersects[0].point.z,
+            pointCloudStats.easting,
+            pointCloudStats.northing,
+            pointCloudStats.width,
+            pointCloudStats.height,
+            pointCloudStats.resolution
+        )
+
+        pointCloudStats.cursorEast = enCoords.easting
+        pointCloudStats.cursorNorth = enCoords.northing
+        pointCloudStats.elevation = elevation
     }
 
     render()
@@ -243,13 +263,13 @@ function getPointCloudFromApi(latitude: number, longitude: number, size: number,
             callback()
         })
 }
+
 // ####################################################################################
 
 
 // Main Component #####################################################################
 const PointCloudViewer = forwardRef((_props, ref) => {
     const refContainer = useRef<HTMLDivElement>(null)
-
 
     useImperativeHandle(ref, () => ({
         resize(width: number, height: number){
@@ -262,7 +282,7 @@ const PointCloudViewer = forwardRef((_props, ref) => {
 
         getPointCloudFromApi(latitude: number, longitude: number, size: number,  callback: () => void){
             getPointCloudFromApi(latitude, longitude, size, callback)
-        }
+        },
     }))
 
     useEffect(() => {
