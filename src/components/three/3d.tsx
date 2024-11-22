@@ -86,23 +86,12 @@ let pointer: THREE.Vector2
 let raycaster: THREE.Raycaster
 let lastControlsAzimuth: number, lastControlsPolar: number
 let intersects: THREE.Intersection[]
+let pointerSphere: THREE.Mesh | null
 
 function initRaycast() {
     pointer = new THREE.Vector2()
     raycaster = new THREE.Raycaster()
-    //document.addEventListener( 'pointermove', onPointerMove)
 }
-
-/*
-function onPointerMove( event: PointerEvent ) {
-    const rect = renderer.domElement.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    pointer.x = ( x / winWidth ) *  2 - 1;
-    pointer.y = ( y / winHeight ) * - 2 + 1
-}
-*/
 
 function onClickDownEvent(){
     // onClick and drag conflict workaround
@@ -137,11 +126,25 @@ function clickEvent(event: React.MouseEvent<HTMLDivElement, MouseEvent>): number
         const bmaxz = pointcloud.geometry.boundingBox!.max.y
         const bminz = pointcloud.geometry.boundingBox!.min.y
         elevation = arduinoMap(selectedz, bminz, bmaxz, pointCloudStats.min_value, pointCloudStats.max_value)
+        drawPointerSphere(intersects[0].point)
     }
 
     render()
 
     return elevation
+}
+
+function drawPointerSphere(position: THREE.Vector3) {
+    if (!pointerSphere) {
+        const geometry = new THREE.SphereGeometry(5, 16, 8)
+        const material = new THREE.MeshBasicMaterial({ color: 0xd4180b })
+        pointerSphere = new THREE.Mesh(geometry, material)
+        pointerSphere.name = 'pointerSphere'
+        // pointerSphere.layers.set(1)??
+        scene.add(pointerSphere)
+    }
+
+    pointerSphere.position.set(position.x, position.y, position.z)
 }
 
 function drawRay(raycaster: THREE.Raycaster) {
@@ -193,6 +196,11 @@ function render() {
 
 function resetControls() {
     controls.reset()
+    if (pointerSphere) {
+        scene.remove(pointerSphere)
+        pointerSphere = null
+    }
+    render()
 }
 // ####################################################################################
 
