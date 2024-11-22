@@ -18,6 +18,45 @@ interface MapProps {
         'ortokuva'
 }
 
+const LeafletLayer = () => {
+    return (
+        <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+    )
+}
+
+const MMLKartta = ({mapType}: MapProps) => {
+    const api_key = '7737f837-ab4a-4765-9727-6deaa4a80082'
+
+    const baseUrl = 'https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts?service=WMTS&request=GetTile&version=1.0.0'
+    const layer = '&layer=' + mapType
+    const crs = '&TileMatrixSet=WGS84_Pseudo-Mercator'
+    const tile = '&TileMatrix={z}&TileRow={y}&TileCol={x}'
+    const format = '&style=default&format=image/png&api-key=' + api_key
+
+    return (
+        <WMSTileLayer
+            url={baseUrl + layer + crs + tile + format}
+            minZoom={1}
+            maxZoom={15}
+        />
+    )
+}
+
+const MapSelector = ({mapType}: MapProps) => {
+    if (mapType) {
+        if(mapType === 'leaflet') {
+            return <LeafletLayer/>
+        } else {
+            return <MMLKartta mapType={mapType}/>
+        }
+    } else {
+        return <LeafletLayer/>
+    }
+}
+
 // https://react-leaflet.js.org/docs/example-events/
 const LeafletMap= ({ mapType }: MapProps) => {
     const [coordinates, coordsDispatch] = useContext(CoordinateContext)
@@ -40,52 +79,24 @@ const LeafletMap= ({ mapType }: MapProps) => {
         )
     }
 
+    console.log('Map reloaded')
 
-    const LeafletMap = () => {
-        return (
-            <MapContainer 
-            center={[coordinates.latitude, coordinates.longitude]}
-            zoom={14}
-            style={{ display:"flex", width:"100%", height:"100%", zIndex: 5 }}
-            >
-
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <LocationMarker/>
-        </MapContainer>
-        )
-    }
-
-
-    const MMLKartta = ({mapType}: MapProps) => {
-        const api_key = '7737f837-ab4a-4765-9727-6deaa4a80082'
-
-        const baseUrl = 'https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts?service=WMTS&request=GetTile&version=1.0.0'
-        const layer = '&layer=' + mapType
-        const crs = '&TileMatrixSet=WGS84_Pseudo-Mercator'
-        const tile = '&TileMatrix={z}&TileRow={y}&TileCol={x}'
-        const format = '&style=default&format=image/png&api-key=' + api_key
-
-        return (
-            <MapContainer 
+    return(
+        <MapContainer 
                 center={[coordinates.latitude, coordinates.longitude]}
                 zoom={14}
                 style={{ display:"flex", width:"100%", height:"100%", zIndex: 5 }}
                 >
-    
-                <WMSTileLayer
-                    url={baseUrl + layer + crs + tile + format}
-                    minZoom={1}
-                    maxZoom={15}
-                />
-                <LocationMarker/>
-            </MapContainer>
+
+                
+        
+            <MapSelector mapType={mapType}/>
+
+
+            <LocationMarker/>
+        </MapContainer>
     )
-    }
-
-
+    /*
     if (mapType) {
         if(mapType === 'leaflet') {
             return <LeafletMap/>
@@ -95,6 +106,7 @@ const LeafletMap= ({ mapType }: MapProps) => {
     } else {
         return <LeafletMap/>
     }
+    */
 }
 
 export default LeafletMap
