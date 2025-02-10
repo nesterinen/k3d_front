@@ -4,7 +4,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 import { forwardRef, useEffect, useRef, useImperativeHandle, useContext } from 'react'
 import StorageContext from '@/reducers/storageReducer'
 
-import { getTif, tif2pcd, pcd2points, arduinoMap, getCoordinate } from '../../utils/pointCloudUtilities'
+import { getTif, pcd2points, arduinoMap, getCoordinate, tif2pcdGradient } from '../../utils/pointCloudUtilities'
+// tif2pcd
 import getTifFile from '../../services/apiService'
 
 // THREE setup ########################################################################
@@ -233,7 +234,8 @@ function resetControls() {
 function loadPointCloud(tifData: ArrayBuffer) {
     if(!tifData) return undefined
 
-    const pcData = tif2pcd(tifData)
+    //const pcData = tif2pcd(tifData)
+    const pcData = tif2pcdGradient(tifData)
 
     pointcloud = pcd2points(pcData.geometry)
     pointCloudStats = pcData.data
@@ -263,7 +265,7 @@ function getPointCloudFromApi(latitude: number, longitude: number, size: number,
             callback()
         })
         .catch(error => {
-            console.log('apiErr', error)
+            console.log('getPointCloudFromApi:', error)
             callback()
         })
 }
