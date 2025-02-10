@@ -32,7 +32,7 @@ function App() {
     if(childRef.current) childRef.current.diagnosisModeSwitch()
   }
 
-  const fetchApiEvent = (lat:number , lng: number, size= 1000) => {
+  const fetchApiEvent = (lat:number , lng: number, size= 2000) => {
     if(childRef.current) {
       dispatch({type: 'START_LOADING', payload: {}})
       childRef.current.getPointCloudFromApi(lat, lng, size, 

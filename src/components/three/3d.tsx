@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
+import GUI from 'lil-gui'
 
 import { forwardRef, useEffect, useRef, useImperativeHandle, useContext } from 'react'
 import StorageContext from '@/reducers/storageReducer'
 
-import { getTif, pcd2points, arduinoMap, getCoordinate, tif2pcdGradient } from '../../utils/pointCloudUtilities'
-// tif2pcd
+import { getTif, pcd2points, arduinoMap, getCoordinate, tif2pcdGradient } from '../../utils/pointCloudUtilities' // tif2pcd
 import getTifFile from '../../services/apiService'
 
 // THREE setup ########################################################################
@@ -14,6 +14,9 @@ let scene: THREE.Scene
 let renderer: THREE.WebGLRenderer
 let controls: OrbitControls
 let winWidth: number, winHeight: number
+
+// GUI setup
+let gui: GUI
 
 //let pointcloud: THREE.Points
 let pointcloud: THREE.Points<THREE.BufferGeometry<THREE.NormalBufferAttributes>, THREE.PointsMaterial, THREE.Object3DEventMap>
@@ -52,6 +55,10 @@ function init(width = 500, height = 500) {
     controls.minDistance = 5
     controls.maxDistance = 500
     controls.zoomSpeed = 2
+
+    gui = new GUI({autoPlace: false})
+    gui.title('Stats')
+    gui.close()
 }
 // ####################################################################################
 
@@ -240,6 +247,21 @@ function loadPointCloud(tifData: ArrayBuffer) {
     pointcloud = pcd2points(pcData.geometry)
     pointCloudStats = pcData.data
 
+    // move to other function?
+    if (gui.controllers.length === 0) {
+        gui.add(pointCloudStats, 'min_value').disable().name('Lowest (m)')
+        gui.add(pointCloudStats, 'max_value').disable().name('Highest (m)')
+        gui.add(pointCloudStats, 'mean_value').disable().name('Mean (m)')
+        gui.add(pointCloudStats, 'width').disable().name('width (px)')
+        gui.add(pointCloudStats, 'height').disable().name('height (px)')
+        gui.add(pointCloudStats, 'resolution').disable().name('(m) per (px)')
+    } else {
+        gui.controllers.map(controller => {
+            controller.object = pointCloudStats
+            controller.updateDisplay()
+        })
+    }
+
     pointcloud.geometry.center();
     pointcloud.name = 'point_cloud';
     pointcloud.material.size = 2
@@ -300,13 +322,19 @@ const PointCloudViewer = forwardRef((_props, ref) => {
                 init(container.parentElement.clientWidth, container.parentElement.clientHeight)
                 initRaycast()
             }
+
             container.appendChild(renderer.domElement)
+
+            // attach gui to container
+            container.getElementsByClassName("gui_container")[0].appendChild(gui.domElement)
+
             if (window) {
                 window.addEventListener('resize', () => resize(container.parentElement?.clientWidth, container.parentElement?.clientHeight))
             }
         }
 
         return () => { // cleanup when component closes
+            if (container) container.getElementsByClassName("gui_container")[0].removeChild(gui.domElement)
             if (container) container.removeChild(renderer.domElement)
             if (window) window.removeEventListener('resize', () => resize)
         }
@@ -324,6 +352,7 @@ const PointCloudViewer = forwardRef((_props, ref) => {
             onClick={(event) => clickEvent(event, dispatch)}
             onMouseDown={() => onClickDownEvent()}
         >
+            <div className="gui_container" style={{position: 'absolute'}}></div>
         </div>
     )
 })
