@@ -305,6 +305,10 @@ const PointCloudViewer = forwardRef((_props, ref) => {
             resize(width, height)
         },
 
+        resize2(){
+            resize(refContainer.current?.parentElement?.clientWidth, refContainer.current?.parentElement?.clientHeight)
+        },
+
         resetControls(){resetControls()},
 
         diagnosisModeSwitch(){diagnosisModeSwitch()},

@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 
 import PointCloudViewer from "./three/3d"
 import LeafletMap from "./leafletMap"
@@ -14,6 +14,7 @@ import { Loading } from "./ui/loading"
 
 interface PointCloudViewerElement extends HTMLDivElement {
   resize: (width: number, height: number) => void,
+  resize2: () => void,
   resetControls: () => void,
   diagnosisModeSwitch: () => void,
   getPointCloudFromApi: (latitude: number, longitude: number, size: number, callback: () => void) => boolean
@@ -21,6 +22,8 @@ interface PointCloudViewerElement extends HTMLDivElement {
 
 function App() {
   const childRef = useRef<PointCloudViewerElement>()
+
+  const [fullsceen, setFullscreen] = useState(false)
 
   const [storage, dispatch] = useContext(StorageContext)
 
@@ -41,10 +44,21 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    childRef.current?.resize2()
+  }, [fullsceen])
+
+  const switchFullscreen = () => {
+    setFullscreen(!fullsceen)
+  }
+
   return (
     <div className="flex flex-wrap justify-center">
 
-      <div className="w-[90vw] h-[70vh] m-2 border text-center content-center min-w-80 max-w-2xl mb-20">
+      {fullsceen ? 
+      <></>
+      :
+      <div className="w-[90vw] h-[80vh] m-2 border text-center content-center min-w-80 max-w-2xl mb-20">
         <LeafletMap/>
 
         <div className="w-full h-12 border border-foreground items-center flex justify-evenly">
@@ -65,11 +79,12 @@ function App() {
             </div>
         </div>
       </div>
+      }
 
 
-      <div className="w-[90vw] h-[70vh] m-2 border text-center content-center min-w-80 max-w-2xl mb-12">
+
+      <div className={`w-[90vw] h-[80vh] m-2 border text-center content-center min-w-80 mb-12 ${fullsceen ? '' : 'max-w-2xl'}`}>
           <PointCloudViewer ref={childRef}/>
-
           <div className="w-full h-12 border border-foreground items-center flex justify-evenly">
             <div className="content-center text-center">
                 <p className="text-sm font-semibold">Diagnosis mode</p>
@@ -83,10 +98,19 @@ function App() {
             <div className="content-center text-center">
                 <Button onClick={resetControlsEvent}>Reset</Button>
             </div>
+
+            <div className="content-center text-center">
+              <Button onClick={() => switchFullscreen()}>
+                {fullsceen ? 
+                <p>"Minimize"</p> : 
+                <p>"Fullscreen"</p>}
+              </Button>
+            </div>
           </div>
       </div>
     </div>
   )
 }
 
-export default App
+export default App //  max-w-2xl  // className="w-[90vw] h-[70vh] m-2 border text-center content-center min-w-80 max-w-2xl mb-12"
+// <div className={`w-[90vw] h-[70vh] m-2 border text-center content-center min-w-80 mb-12 ${fullsceen ? childRef.current?.dispatchEvent(new Event('resize')) : 'max-w-2xl'}`}>
