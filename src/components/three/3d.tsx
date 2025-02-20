@@ -30,9 +30,9 @@ export interface PCDStats {
     resolution: number,
     easting: number,
     northing: number,
-    cursorNorth?: number,
-    cursorEast?: number,
-    elevation?: number
+    cursorNorth: number,
+    cursorEast: number,
+    elevation: number
 }
 let pointCloudStats: PCDStats
 
@@ -158,6 +158,11 @@ function clickEvent(event: React.MouseEvent<HTMLDivElement, MouseEvent>, callbac
         pointCloudStats.cursorNorth = enCoords.northing
         pointCloudStats.elevation = elevation
 
+        gui.controllers.map(controller => {
+            controller.object = pointCloudStats
+            controller.updateDisplay()
+        })
+
         callback({type: 'SET_STATS', payload:{stats: pointCloudStats}})
     }
 
@@ -245,16 +250,19 @@ function loadPointCloud(tifData: ArrayBuffer) {
     const pcData = tif2pcdGradient(tifData)
 
     pointcloud = pcd2points(pcData.geometry)
-    pointCloudStats = pcData.data
+    pointCloudStats = {...pcData.data, cursorEast:0, cursorNorth:0, elevation:0}
 
     // move to other function?
     if (gui.controllers.length === 0) {
         gui.add(pointCloudStats, 'min_value').disable().name('Lowest (m)')
         gui.add(pointCloudStats, 'max_value').disable().name('Highest (m)')
         gui.add(pointCloudStats, 'mean_value').disable().name('Mean (m)')
-        gui.add(pointCloudStats, 'width').disable().name('width (px)')
-        gui.add(pointCloudStats, 'height').disable().name('height (px)')
+        gui.add(pointCloudStats, 'width').disable().name('Width (px)')
+        gui.add(pointCloudStats, 'height').disable().name('Height (px)')
         gui.add(pointCloudStats, 'resolution').disable().name('(m) per (px)')
+        gui.add(pointCloudStats, 'elevation').disable().name('Cursor elevation (m)')
+        gui.add(pointCloudStats, 'cursorEast').disable().name('Cursor easting')
+        gui.add(pointCloudStats, 'cursorNorth').disable().name('Cursor northing')
     } else {
         gui.controllers.map(controller => {
             controller.object = pointCloudStats

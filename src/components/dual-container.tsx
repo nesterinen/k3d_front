@@ -96,14 +96,14 @@ function App() {
             </div>
 
             <div className="content-center text-center">
-                <Button onClick={resetControlsEvent}>Reset</Button>
+                <Button onClick={resetControlsEvent}>Reset view</Button>
             </div>
 
             <div className="content-center text-center">
               <Button onClick={() => switchFullscreen()}>
                 {fullsceen ? 
-                <p>"Minimize"</p> : 
-                <p>"Fullscreen"</p>}
+                <p>Minimize</p> : 
+                <p>Maximize</p>}
               </Button>
             </div>
           </div>
