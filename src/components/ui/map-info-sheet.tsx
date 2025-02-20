@@ -74,7 +74,7 @@ export function MapInfoSheet() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button>Settings</Button>
+        <Button>settings</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>

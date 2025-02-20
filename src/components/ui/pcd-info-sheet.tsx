@@ -44,7 +44,7 @@ export function PCDInfoSheet() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button>Details</Button>
+        <Button>details</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>

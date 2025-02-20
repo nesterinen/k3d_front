@@ -74,7 +74,7 @@ function App() {
             <div className="content-center text-center flex justify-end px-1">
                 {storage.loading ?
                 <Loading/>  :
-                <Button onClick={() => fetchApiEvent(storage.latitude, storage.longitude)}>Fetch Map</Button>
+                <Button onClick={() => fetchApiEvent(storage.latitude, storage.longitude)}>fetch map</Button>
                 }
             </div>
         </div>
@@ -87,7 +87,7 @@ function App() {
           <PointCloudViewer ref={childRef}/>
           <div className="w-full h-12 border border-foreground items-center flex justify-evenly">
             <div className="content-center text-center">
-                <p className="text-sm font-semibold">Diagnosis mode</p>
+                <p className="text-sm font-semibold">diagnosis</p>
                 <Switch onCheckedChange={diagnosisModeSwitchEvent}/>
             </div>
 
@@ -96,14 +96,14 @@ function App() {
             </div>
 
             <div className="content-center text-center">
-                <Button onClick={resetControlsEvent}>Reset view</Button>
+                <Button onClick={resetControlsEvent}>reset view</Button>
             </div>
 
             <div className="content-center text-center">
               <Button onClick={() => switchFullscreen()}>
                 {fullsceen ? 
-                <p>Minimize</p> : 
-                <p>Maximize</p>}
+                <p>minimize</p> : 
+                <p>maximize</p>}
               </Button>
             </div>
           </div>

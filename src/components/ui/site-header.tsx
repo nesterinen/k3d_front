@@ -11,11 +11,6 @@ export function SiteHeader() {
 
                 <div className='flex flex-1 items-center justify-between gap-2 md:justify-end'>
                     <div className='w-full flex-1'/>
-
-                    <p className='text-sm font-semibold text-muted-foreground hover:text-foreground'>
-                        mode:
-                    </p>
-                    
                     <ModeSwitch/>
                 </div>
             </div>
