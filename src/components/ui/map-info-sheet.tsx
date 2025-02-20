@@ -51,6 +51,26 @@ export function MapInfoSheet() {
     )
   }
 
+  const sizeSelectorAction = (value: "500" | "1000" | "1500" | "2000") => {
+    dispatch({type: 'SET_SIZE', payload:{size: parseInt(value)}})
+  }
+
+  const SizeSelector = () => {
+    return (
+      <Select onValueChange={sizeSelectorAction}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder={storage.size}/>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="500">500</SelectItem>
+          <SelectItem value="1000">1000</SelectItem>
+          <SelectItem value="1500">1500</SelectItem>
+          <SelectItem value="2000">2000</SelectItem>
+        </SelectContent>
+      </Select>
+    )
+  }
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -106,6 +126,13 @@ export function MapInfoSheet() {
         <h2 className="font-semibold text-muted-foreground border-t mb-2">Settings:</h2>
         <div className="grid gap-4 py-4">
         <div className="grid grid-cols-3 items-center gap-4">
+            <p className="text-sm font-semibold">
+                Map size(m²):
+            </p>
+                <SizeSelector/>
+          </div>
+
+          <div className="grid grid-cols-3 items-center gap-4">
             <p className="text-sm font-semibold">
                 Map style:
             </p>
