@@ -1,50 +1,22 @@
-# React + TypeScript + Vite
+<h1 align="center"> Kartta3D - view Finnish elevation model's in 3D. (prototype)</h1>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+  <img src="dev/k3d_f.jpeg"/>
+</p>
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<h3> Functionality: </h3>
+<ul>
+  <li>Select location from the Leaflet map and fetch</li>
+  <li>.TIF is fetched from MaanMittausLaitos through k3d_back because of CORS</li>
+  <li>.TIF is converted to pointcloud and colored according to elevation</li>
+  <li>pointcloud is displayed with Three.js</li>
+</ul>
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+---
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+<h4>Hosted on Render. (free)</h4>
+<a href="https://kartta3d.onrender.com"> kartta3d.onrender.com </a>
+<p>Fetching the map(.TIF) will probably take a while since the backend is being hosted for free, the server has to spool up on fetch so the response time might be minutes..</p>
