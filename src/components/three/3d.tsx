@@ -250,6 +250,7 @@ function loadPointCloud(tifData: ArrayBuffer) {
     const pcData = tif2pcdGradient(tifData)
 
     pointcloud = pcd2points(pcData.geometry)
+    //pointcloud = pcd2points(pcData.geometry, pcData.data.width, pcData.data.height, pcData.data.min_value)
     pointCloudStats = {...pcData.data, cursorEast:0, cursorNorth:0, elevation:0}
 
     // move to other function?
@@ -270,27 +271,52 @@ function loadPointCloud(tifData: ArrayBuffer) {
         })
     }
 
-    pointcloud.geometry.center();
     pointcloud.name = 'point_cloud';
-    pointcloud.material.size = 2
+
+    type PointCloudType = THREE.Points<THREE.BufferGeometry<THREE.NormalBufferAttributes>, THREE.PointsMaterial, THREE.Object3DEventMap> | null
+    let oldPointCloud = scene.getObjectByName('point_cloud') as PointCloudType
+    if(oldPointCloud){
+        // this has to be done to manage memory.
+        oldPointCloud.geometry.dispose()
+        oldPointCloud.material.dispose()
+        scene.remove(oldPointCloud)
+        oldPointCloud = null
+
+        pointcloud.material.size = 2
+        pointcloud.geometry.center() // center is slow but will do for now.
+        scene.add(pointcloud)
+    } else {
+        pointcloud.material.size = 2
+        pointcloud.geometry.center() // center is slow but will do for now.
+        scene.add(pointcloud)
+    }
+
+    //pointcloud.material.size = 2
+    //pointcloud.geometry.center() // center is slow but will do for now.
+
+    /*
+    pointcloud.geometry.center();
     pointcloud.geometry.rotateX((Math.PI / 2) * 3) // rotate 90 degreee three times
     pointcloud.geometry.rotateY((Math.PI / 2) * 3) // rotate 90 degreee three times
 
-    scene.add( pointcloud );
+    */
+    //scene.add( pointcloud );
 
     render()
 }
 
+/* removing and other clean up is done in loadPointCloudData for now.
 function removePointCloud() {
     const object = scene.getObjectByName('point_cloud')
     scene.remove(object!)
 }
+*/
 
 function getPointCloudFromApi(latitude: number, longitude: number, size: number, callback: () => void) {
     console.log('FETCHING')
     getTifFile(latitude, longitude, size)
         .then(data => {
-            removePointCloud()
+            //removePointCloud()
             loadPointCloud(data)
             callback()
         })

@@ -113,6 +113,7 @@ interface PCDProps {
     position: number[],
     color: number[]
 }
+
 /**
  * @param position array of numbers xyz
  * @param color array of colors rgb
@@ -126,7 +127,8 @@ export const pcd2points = ({position, color}: PCDProps) => {
     if ( position.length > 0 ) geometry.setAttribute( 'position', new Float32BufferAttribute( position, 3 ) );
     if ( color.length > 0 ) geometry.setAttribute( 'color', new Float32BufferAttribute( color, 3 ) );
 
-    geometry.computeBoundingSphere()
+    //geometry.computeBoundingSphere()
+    geometry.computeBoundingBox()
 
     // build material
 
@@ -139,8 +141,16 @@ export const pcd2points = ({position, color}: PCDProps) => {
     }
 
     // build point cloud
+    const returnPoints = new Points( geometry, material )
+    /* faster centering, but it screws with other stuff no time to fix for now...
+    if(width && height && min_value){
+        returnPoints.position.x = -(width/2)
+        returnPoints.position.z = -(height/2)
+        returnPoints.position.y = -min_value
+    }
+    */
 
-    return new Points( geometry, material )
+    return returnPoints
 }
 
 
@@ -224,10 +234,10 @@ export const tif2pcdGradient = (data: ArrayBuffer) => {
         for (let x = 0; x < tiff.width; x++){
             const z = tiff.data[index]
 
-            // geometry
-            position.push(y) // x for 3js geometry
-            position.push(x) // y for 3js geometry
-            position.push(z) // z for 3js geometry
+            // geometry, changed coordinates order from xyz to xzy...
+            position.push(x) // y?? for 3js geometry
+            position.push(z) // z?? for 3js geometry
+            position.push(y) // x?? for 3js geometry
 
             // color
             const rgb_value = colorMap(z, max_value, min_value)  // z 70m-130m -> 1.0 - 0.0
